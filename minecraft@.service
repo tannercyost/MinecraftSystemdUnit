@@ -37,26 +37,7 @@ EnvironmentFile=-/opt/minecraft/%i/server.conf
 # Uncomment this to fix screen on RHEL 8
 #ExecStartPre=+/bin/sh -c 'chmod 777 /run/screen'
 
-ExecStart=/bin/sh -c \
-    'find -L . \
-      -maxdepth 1 \
-      -type f \
-      -iregex ".*/\\(FTBServer\\|craftbukkit\\|spigot\\|paper\\|forge\\|minecraft_server\\).*jar" \
-      -print0 \
-      -quit \
-    | xargs -0 -I{} \
-      /usr/bin/screen -DmS mc-%i \
-        /usr/bin/java \
-          -server \
-          -Xms${MCMINMEM} \
-          -Xmx${MCMAXMEM} \
-          -XX:+UseG1GC \
-          -XX:+CMSClassUnloadingEnabled \
-          -XX:ParallelGCThreads=2 \
-          -XX:MinHeapFreeRatio=5 \
-          -XX:MaxHeapFreeRatio=10 \
-          -jar {} \
-          nogui'
+ExecStart=/usr/bin/screen -DmS mc-%i ./start.sh
 
 ExecReload=/usr/bin/screen -p 0 -S mc-%i -X eval 'stuff "reload"\\015'
 
@@ -90,4 +71,3 @@ WantedBy=multi-user.target
 # To change specific server memory assignment, create file /opt/minecraft/XX/server.conf (where XX is your server name) and add below lines:
 # MCMINMEM=512M
 # MCMAXMEM=2048M
-
